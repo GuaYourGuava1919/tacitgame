@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { api, MODES, QUIZ_CATEGORIES, type RoomView } from '../net'
+import StringWeb, { type WebNode } from './StringWeb.vue'
 
 const props = defineProps<{ room: RoomView }>()
 
@@ -47,26 +48,28 @@ async function share() {
 }
 
 const myCount = computed(() => props.room.custom.filter((q) => q.mine).length)
+
+const nodes = computed<WebNode[]>(() =>
+  props.room.players.map((p) => ({
+    id: p.id,
+    name: p.name,
+    me: p.id === props.room.you,
+    state: p.connected ? 'inked' : 'off',
+    tag: p.id === props.room.hostId ? '♛' : undefined,
+  })),
+)
 </script>
 
 <template>
   <div class="lobby">
-    <section class="card invite">
-      <div>
-        <p class="muted small">邀請朋友，最多 8 人</p>
-        <p class="code">{{ room.code }}</p>
-      </div>
-      <button class="btn primary" @click="share">{{ copied ? '已複製連結 ✓' : '分享邀請' }}</button>
-    </section>
-
-    <section class="card">
-      <h3>玩家 <span class="muted small">{{ online.length }} 人</span></h3>
-      <ul class="people">
-        <li v-for="p in room.players" :key="p.id" :class="{ off: !p.connected, me: p.id === room.you }">
-          <span v-if="p.id === room.hostId" title="房主">♛</span>
-          {{ p.name }}
-        </li>
-      </ul>
+    <section class="invite">
+      <StringWeb :nodes="nodes" compact>
+        <span class="muted tiny">房號</span>
+        <span class="code">{{ room.code }}</span>
+        <span class="muted tiny">{{ online.length }} / 8 人</span>
+      </StringWeb>
+      <button class="btn primary" @click="share">{{ copied ? '已複製連結 ✓' : '分享邀請連結' }}</button>
+      <p class="muted small">每來一個人，圓上就多蓋一枚印章</p>
     </section>
 
     <section class="card">
@@ -185,18 +188,25 @@ h3 {
 }
 .invite {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 6px;
+  text-align: center;
 }
 .invite p {
   margin: 0;
 }
+.tiny {
+  font-size: 12px;
+  display: block;
+}
 .code {
+  display: block;
   font-family: var(--serif);
-  font-weight: 900;
-  font-size: 30px;
-  letter-spacing: 0.15em;
+  font-weight: 700;
+  font-size: clamp(17px, 4.6vw, 24px);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
 }
 .people {
   list-style: none;

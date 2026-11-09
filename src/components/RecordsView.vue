@@ -91,7 +91,7 @@ summary {
   font-family: var(--serif);
   font-weight: 700;
   font-size: 20px;
-  color: var(--accent);
+  color: var(--thread);
 }
 .rank {
   display: flex;
@@ -113,7 +113,7 @@ li {
   gap: 10px;
 }
 li.hit .ws {
-  color: var(--accent);
+  color: var(--thread);
 }
 .n {
   width: 22px;

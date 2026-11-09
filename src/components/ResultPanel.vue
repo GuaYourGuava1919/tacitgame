@@ -1,15 +1,47 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { api, type RoomView } from '../net'
-import { summarize, verdict } from '../stats'
+import { aggregateEdges, summarize, verdict } from '../stats'
+import { exportWebImage } from '../exportWeb'
+import StringWeb, { type WebEdge, type WebNode } from './StringWeb.vue'
 
 const props = defineProps<{ room: RoomView }>()
 
 const mode = computed(() => props.room.settings.mode)
 const sum = computed(() => summarize(mode.value, props.room.players, props.room.history))
-const meterBg = computed(
-  () => `conic-gradient(var(--accent) ${sum.value.index}%, var(--surface-2) 0)`,
+const edges = computed(() => aggregateEdges(props.room.history))
+const webEdges = computed<WebEdge[]>(() =>
+  edges.value.map((e, i) => ({ ...e, kind: 'final', delay: 200 + i * 180 })),
 )
+const webNodes = computed<WebNode[]>(() =>
+  props.room.players.map((p) => ({
+    id: p.id,
+    name: p.name,
+    me: p.id === props.room.you,
+    state: 'inked',
+    tag: mode.value === 'chain' ? undefined : `${p.score} 分`,
+  })),
+)
+const saving = ref(false)
+async function saveImage() {
+  saving.value = true
+  try {
+    await exportWebImage({
+      title: mode.value === 'chain' ? '想到一起了' : '我們的默契網',
+      subtitle: `靈犀・${mode.value === 'guess' ? '猜你會說' : mode.value === 'chain' ? '同詞聯想' : '默契問答'}${mode.value === 'chain' ? '' : '・' + props.room.categoryName}`,
+      index: mode.value === 'chain' ? null : sum.value.index,
+      verdict: mode.value === 'chain' ? chainWord.value : verdict(sum.value.index),
+      players: props.room.players.map((p) => ({
+        id: p.id,
+        name: p.name,
+        score: mode.value === 'chain' ? undefined : p.score,
+      })),
+      edges: edges.value,
+    })
+  } finally {
+    saving.value = false
+  }
+}
 const last = computed(() => props.room.history[props.room.history.length - 1])
 const chainWord = computed(() =>
   last.value ? [...new Set(Object.values(last.value.words))].join(' ≈ ') : '',
@@ -27,7 +59,9 @@ const bestWord = computed(() => {
   <section class="card result">
     <!-- 同詞聯想 -->
     <template v-if="room.phase === 'success'">
-      <div class="stamp">合</div>
+      <StringWeb :nodes="webNodes" :edges="webEdges" compact>
+        <div class="stamp">合</div>
+      </StringWeb>
       <h2>想到一起了！</h2>
       <p class="big-word">{{ chainWord }}</p>
       <p class="muted">用了 {{ room.history.length }} 輪</p>
@@ -40,10 +74,11 @@ const bestWord = computed(() => {
     <!-- 問答 / 猜你會說 -->
     <template v-else>
       <p class="muted small">{{ mode === 'guess' ? '猜你會說' : '默契問答' }}・{{ room.categoryName }}・{{ room.history.length }} 題</p>
-      <div class="meter" :style="{ background: meterBg }">
+      <StringWeb :nodes="webNodes" :edges="webEdges">
         <span class="pct">{{ sum.index }}<small>%</small></span>
-      </div>
-      <p class="muted small">默契指數（{{ sum.matched }} / {{ sum.possible }} 組對上）</p>
+        <span class="muted tiny">默契指數</span>
+      </StringWeb>
+      <p class="muted small">{{ sum.matched }} / {{ sum.possible }} 條線牽上了・越常對上線越粗</p>
       <h2>{{ verdict(sum.index) }}</h2>
 
       <ol class="rank">
@@ -70,6 +105,7 @@ const bestWord = computed(() => {
 
     <div class="btns">
       <button class="btn primary" @click="api.lobby()">回大廳再玩一局</button>
+      <button class="btn" :disabled="saving" @click="saveImage">{{ saving ? '產生中…' : '存成圖片分享' }}</button>
       <button class="btn" @click="api.leave()">離開</button>
     </div>
   </section>
@@ -85,6 +121,10 @@ const bestWord = computed(() => {
 h2 {
   font-size: 24px;
   margin: 6px 0 16px;
+}
+.tiny {
+  font-size: 12px;
+  display: block;
 }
 .meter {
   width: 140px;
@@ -103,11 +143,11 @@ h2 {
   background: var(--surface);
 }
 .pct {
-  position: relative;
-  z-index: 1;
   font-family: var(--serif);
-  font-weight: 900;
-  font-size: 40px;
+  font-weight: 700;
+  font-size: clamp(32px, 9vw, 52px);
+  line-height: 1;
+  display: block;
 }
 .pct small {
   font-size: 16px;
@@ -169,13 +209,13 @@ h2 {
   width: 72px;
   height: 72px;
   margin: 4px auto 12px;
-  border: 3px solid var(--accent);
-  color: var(--accent);
+  border: 3px solid var(--thread);
+  color: var(--thread);
   border-radius: 12px;
   display: grid;
   place-items: center;
   font-family: var(--serif);
-  font-weight: 900;
+  font-weight: 700;
   font-size: 40px;
   transform: rotate(-8deg);
   animation: stamp 0.45s cubic-bezier(0.2, 1.6, 0.4, 1) both;
@@ -189,8 +229,8 @@ h2 {
 .big-word {
   font-family: var(--serif);
   font-size: 34px;
-  font-weight: 900;
-  color: var(--accent);
+  font-weight: 700;
+  color: var(--thread);
   margin: 8px 0 0;
 }
 </style>

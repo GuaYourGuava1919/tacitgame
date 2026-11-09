@@ -28,7 +28,8 @@ function goHome() {
     <div class="wrap bar">
       <a class="logo" href="./" @click.prevent="goHome">
         <span class="seal">犀</span>
-        <span>靈犀</span>
+        <span class="logo-name">靈犀</span>
+        <span class="logo-sub hide-sm">Lingxi · 默契派對</span>
       </a>
       <nav>
         <button
@@ -55,8 +56,23 @@ function goHome() {
   </main>
 
   <footer class="wrap foot muted">
-    <span>靈犀：心有靈犀一點通</span>
-    <span v-if="!net.connected" class="offline">● 連線中…</span>
+    <div class="foot-left">
+      <span>靈犀：心有靈犀一點通</span>
+      <span v-if="!net.connected" class="offline">● 連線中…</span>
+    </div>
+    <a
+      class="studio"
+      href="https://tiramisunn1919.github.io"
+      target="_blank"
+      rel="noopener"
+      aria-label="由緹拉米蘇 Tiramisu Web Studio 製作（開啟工作室網站）"
+    >
+      <img src="/brand/tiramisu-icon.webp" alt="" width="36" height="36" loading="lazy" />
+      <div>
+        <span class="made">Made by</span>
+        <span class="studio-name">緹拉米蘇 <span class="studio-en">Tiramisu Web Studio</span></span>
+      </div>
+    </a>
   </footer>
 
   <div v-if="net.error" class="toast">{{ net.error }}</div>
@@ -82,10 +98,24 @@ function goHome() {
   align-items: center;
   gap: 10px;
   font-family: var(--serif);
-  font-weight: 900;
+  font-weight: 700;
   font-size: 20px;
   color: var(--ink);
   text-decoration: none;
+  white-space: nowrap;
+}
+.logo-name {
+  letter-spacing: 0.08em;
+}
+.logo-sub {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-left: 10px;
+  border-left: 1px solid var(--line-strong);
 }
 .seal {
   display: grid;
@@ -93,8 +123,8 @@ function goHome() {
   width: 30px;
   height: 30px;
   border-radius: 7px;
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--thread);
+  color: var(--thread-ink);
   font-size: 17px;
   transform: rotate(-4deg);
 }
@@ -113,10 +143,72 @@ nav .active {
 .foot {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
   font-size: 13px;
   padding-top: 16px;
   padding-bottom: 24px;
   border-top: 1px solid var(--line);
+}
+.foot-left {
+  display: flex;
+  gap: 12px;
+}
+/* 緹拉米蘇工作室署名：樣式比照 tiramisu_SPA 頁尾 */
+.studio {
+  --cocoa: #4f1d08;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 10px;
+  padding: 4px 8px 4px 4px;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+:root[data-theme='dark'] .studio {
+  --cocoa: #e2c2a6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .studio {
+    --cocoa: #e2c2a6;
+  }
+}
+.studio:hover {
+  background: var(--surface-2);
+}
+.studio:hover .studio-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.studio img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.studio > div {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+.made {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.studio-name {
+  color: var(--cocoa);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+}
+.studio-en {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-left: 4px;
 }
 .offline {
   color: var(--accent);

@@ -1,58 +1,97 @@
+/*
+ * 靈犀 — 設計語言沿用 緹拉米蘇 Tiramisu Web Studio
+ * 奶油底、可可棕字、薄荷葉綠為操作色；紅線（赤陶紅）是遊戲本身的識別色
+ */
 :root {
-  --bg: #f6f1e7;
-  --surface: #fffdf8;
-  --surface-2: #efe7d8;
-  --ink: #2a2622;
-  --ink-soft: #6e655b;
-  --line: #e0d6c4;
-  --accent: #c2412d;
+  --bg: #f9f5e8; /* 奶油底 */
+  --surface: #fffdf8; /* 卡片 */
+  --surface-2: #f2e9d6; /* 淡可可 */
+  --ink: #4f1d08; /* 可可棕 */
+  --ink-body: #5c3a28; /* 摩卡內文 */
+  --ink-soft: #856a57; /* 拿鐵灰 */
+  --line: #ece1cc;
+  --line-strong: #dcc9ac;
+
+  --accent: #5b7536; /* 薄荷葉綠：按鈕、標籤 */
+  --accent-deep: #3f5424;
   --accent-ink: #fff;
-  --accent-soft: #f6dcd4;
-  --ok: #2f7d5b;
-  --ok-soft: #d8eee3;
-  --shadow: 0 1px 2px rgb(60 40 20 / 6%), 0 8px 24px rgb(60 40 20 / 7%);
-  --radius: 14px;
-  --serif: 'Noto Serif TC', 'Songti TC', 'PMingLiU', serif;
-  --sans: 'Noto Sans TC', system-ui, -apple-system, 'PingFang TC',
-    'Microsoft JhengHei', sans-serif;
+  --accent-soft: #edf2e2;
+  --accent-rgb: 91, 117, 54;
+
+  --thread: #b4472e; /* 紅線：印章、連線 */
+  --thread-ink: #fff;
+  --thread-soft: #f6e0d6;
+
+  --ladyfinger: #e8c9a0; /* 手指餅乾：螢光筆底線 */
+  --ok: #5b7536;
+  --ok-soft: #edf2e2;
+
+  --shadow: 0 6px 16px rgb(79 29 8 / 7%);
+  --shadow-lg: 0 14px 36px rgb(79 29 8 / 12%);
+  --radius: 16px;
+  --radius-md: 10px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --serif: 'Noto Serif TC', Georgia, 'Songti TC', 'PMingLiU', serif;
+  --sans: 'Noto Sans TC', -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
   color-scheme: light;
 }
 
+/* 深色：深焙巧克力 */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #1b1916;
-    --surface: #24211d;
-    --surface-2: #2e2a25;
-    --ink: #eee7dc;
-    --ink-soft: #a89e90;
-    --line: #3a352e;
-    --accent: #e0644d;
-    --accent-ink: #1b1916;
-    --accent-soft: #4a2a23;
-    --ok: #6cc59a;
-    --ok-soft: #22392e;
-    --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 25%);
+    --bg: #2e1508;
+    --surface: #3a1d0e;
+    --surface-2: #47261a;
+    --ink: #f6e9d6;
+    --ink-body: #e6d2bc;
+    --ink-soft: #c4a98f;
+    --line: #553521;
+    --line-strong: #6b4630;
+    --accent: #a3c06f;
+    --accent-deep: #c0d898;
+    --accent-ink: #1f2a10;
+    --accent-soft: #34401f;
+    --accent-rgb: 163, 192, 111;
+    --thread: #e8805f;
+    --thread-ink: #2e1508;
+    --thread-soft: #5a2a1a;
+    --ladyfinger: #6b4630;
+    --ok: #a3c06f;
+    --ok-soft: #34401f;
+    --shadow: 0 6px 16px rgb(0 0 0 / 25%);
+    --shadow-lg: 0 14px 36px rgb(0 0 0 / 35%);
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg: #1b1916;
-  --surface: #24211d;
-  --surface-2: #2e2a25;
-  --ink: #eee7dc;
-  --ink-soft: #a89e90;
-  --line: #3a352e;
-  --accent: #e0644d;
-  --accent-ink: #1b1916;
-  --accent-soft: #4a2a23;
-  --ok: #6cc59a;
-  --ok-soft: #22392e;
-  --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 8px 24px rgb(0 0 0 / 25%);
+  --bg: #2e1508;
+  --surface: #3a1d0e;
+  --surface-2: #47261a;
+  --ink: #f6e9d6;
+  --ink-body: #e6d2bc;
+  --ink-soft: #c4a98f;
+  --line: #553521;
+  --line-strong: #6b4630;
+  --accent: #a3c06f;
+  --accent-deep: #c0d898;
+  --accent-ink: #1f2a10;
+  --accent-soft: #34401f;
+  --accent-rgb: 163, 192, 111;
+  --thread: #e8805f;
+  --thread-ink: #2e1508;
+  --thread-soft: #5a2a1a;
+  --ladyfinger: #6b4630;
+  --ok: #a3c06f;
+  --ok-soft: #34401f;
+  --shadow: 0 6px 16px rgb(0 0 0 / 25%);
+  --shadow-lg: 0 14px 36px rgb(0 0 0 / 35%);
   color-scheme: dark;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -62,12 +101,29 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
+  font-weight: 400;
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
 
+/* 頂部暖色光暈，呼應 tiramisu 首頁 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    120% 60% at 75% -10%,
+    color-mix(in srgb, var(--ladyfinger) 35%, transparent),
+    transparent 60%
+  );
+}
+
 #app {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -77,9 +133,11 @@ h1,
 h2,
 h3 {
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.3;
+  letter-spacing: 0.01em;
   margin: 0;
+  color: var(--ink);
 }
 
 button,
@@ -92,35 +150,64 @@ button {
   cursor: pointer;
 }
 
+::selection {
+  background: var(--ladyfinger);
+}
+
 .wrap {
   width: 100%;
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 20px;
+}
+
+/* 小標：01 / MODES */
+.eyebrow {
+  margin: 0;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* 螢光筆底線（手指餅乾色） */
+.mark {
+  background: linear-gradient(transparent 62%, var(--ladyfinger) 62%, var(--ladyfinger) 92%, transparent 92%);
+  padding: 0 2px;
 }
 
 .card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 20px;
+  padding: 22px;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
 
 .btn {
+  white-space: nowrap;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  border: 1px solid var(--line);
+  gap: 8px;
+  border: 1px solid var(--line-strong);
   background: var(--surface);
-  border-radius: 999px;
-  padding: 10px 20px;
+  color: var(--ink);
+  border-radius: var(--radius-md);
+  padding: 11px 22px;
   font-weight: 600;
-  transition: transform 0.08s, background 0.15s, border-color 0.15s;
+  font-size: 15px;
+  line-height: 1.2;
+  transition: all 0.25s var(--ease);
 }
-.btn:active {
-  transform: scale(0.97);
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--ink);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
 }
 .btn:disabled {
   opacity: 0.45;
@@ -131,16 +218,25 @@ button {
   border-color: var(--accent);
   color: var(--accent-ink);
 }
+.btn.primary:hover:not(:disabled) {
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+  box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.35);
+}
 .btn.ghost {
   background: transparent;
   border-color: transparent;
   color: var(--ink-soft);
   padding: 6px 10px;
 }
+.btn.ghost:hover:not(:disabled) {
+  color: var(--ink);
+  border-color: transparent;
+}
 .btn.on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--bg);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .btn.block {
   width: 100%;
@@ -148,19 +244,21 @@ button {
 
 .input {
   width: 100%;
-  border: 1px solid var(--line);
-  background: var(--bg);
-  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  border-radius: var(--radius-md);
   padding: 12px 14px;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .input:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
 }
 
 .label {
   font-size: 13px;
+  font-weight: 500;
   color: var(--ink-soft);
   margin-bottom: 6px;
   display: block;
@@ -188,8 +286,20 @@ button {
   background: var(--ink);
   color: var(--bg);
   padding: 10px 18px;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font-size: 14px;
   z-index: 50;
   max-width: calc(100vw - 32px);
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 4px;
 }

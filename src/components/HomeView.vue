@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import { api, MODES, net } from '../net'
+import StringWeb, { type WebEdge, type WebNode } from './StringWeb.vue'
 
 const urlCode = api.pendingRoomFromUrl()
 const name = ref(net.name)
@@ -28,38 +29,74 @@ function random() {
   if (need()) api.random()
 }
 
-const demo = [
-  { name: '阿明', word: '雞排', hit: true },
-  { name: '小花', word: '雞排', hit: true },
-  { name: '小樹', word: '臭豆腐', hit: false },
+// 首頁示範：每幾秒換一題，紅線重新牽一次
+const demos = [
+  { q: '夜市必吃的一樣東西', w: ['雞排', '雞排', '臭豆腐', '雞排'], pairs: [[0, 1], [1, 3], [0, 3]] },
+  { q: '一說到夏天，想到什麼？', w: ['西瓜', '海邊', '西瓜', '冷氣'], pairs: [[0, 2]] },
+  { q: '荒島上只能帶一樣東西', w: ['刀', '手機', '打火機', '小刀'], pairs: [[0, 3]] },
+]
+const names = ['阿明', '小花', '小樹', '雨']
+const step = ref(0)
+const loop = window.setInterval(() => step.value++, 5200)
+onUnmounted(() => clearInterval(loop))
+const demo = computed(() => demos[step.value % demos.length])
+const demoNodes = computed<WebNode[]>(() =>
+  names.map((name, i) => ({
+    id: String(i),
+    name,
+    word: demo.value.w[i],
+    state: 'inked',
+    hit: demo.value.pairs.some((p) => p.includes(i)),
+  })),
+)
+const demoEdges = computed<WebEdge[]>(() =>
+  demo.value.pairs.map(([a, b], i) => ({
+    a: String(a),
+    b: String(b),
+    kind: 'fresh',
+    delay: 500 + i * 350,
+    key: `${step.value}-${a}-${b}`,
+  })),
+)
+
+const stats = [
+  { n: '210 題', t: '內建題庫', d: '7 種主題，也能自己出題' },
+  { n: '8 人', t: '一間房最多', d: '分享連結，到齊就能開' },
+  { n: '3 種', t: '玩法', d: '主打默契問答，結算看默契網' },
 ]
 
 const scoring = [
-  { k: '+1', t: '每對上一個人', d: '你和誰答得一樣，你們兩個各得 1 分。' },
-  { k: '≈', t: '意思一樣也算', d: '「腳踏車」和「單車」？雙方都按認同就算對上。' },
-  { k: '+2', t: '全員同步', d: '三人以上全部答得一樣，每人再加 2 分。' },
+  { k: '+1', t: '牽上一條紅線', d: '你和誰答得一樣，你們之間就牽起一條紅線，各得 1 分。' },
+  { k: '≈', t: '意思一樣也算', d: '「腳踏車」和「單車」？點對方的印章牽線，雙方都牽就算。' },
+  { k: '+2', t: '全員同步', d: '三人以上全部答得一樣，紅線連成一圈，每人再加 2 分。' },
 ]
 </script>
 
 <template>
   <section class="hero">
     <div class="copy">
-      <p class="kicker">線上默契派對遊戲・2 到 8 人</p>
-      <h1>你懂我，<br /><em>我懂你</em>嗎？</h1>
-      <p class="muted lead">同一個問題，大家各自作答。看看誰跟誰最有默契，誰又是全場最難猜的人。</p>
+      <p class="pill"><span class="dot" />默契問答・猜你會說・2 到 8 人・免費</p>
+      <h1>你懂我，<br /><span class="mark">我懂你</span>嗎？</h1>
+      <p class="muted lead">同一個問題，大家各自作答。答得一樣的人之間會牽起一條紅線，一局下來，織成你們專屬的默契網。</p>
     </div>
 
     <figure class="demo" aria-label="遊戲示意">
-      <p class="dq">第 3 題・夜市必吃的一樣東西</p>
-      <ul>
-        <li v-for="d in demo" :key="d.name" :class="{ hit: d.hit }">
-          <span class="dn">{{ d.name }}</span>
-          <strong>{{ d.word }}</strong>
-          <span v-if="d.hit" class="plus">+1</span>
-        </li>
-      </ul>
-      <p class="dfoot">阿明 ⇄ 小花 對上了！</p>
+      <p class="dq">
+        <Transition name="fade" mode="out-in"><span :key="step">{{ demo.q }}</span></Transition>
+      </p>
+      <StringWeb :nodes="demoNodes" :edges="demoEdges" compact>
+        <span class="dn">{{ demo.pairs.length }}</span>
+        <span class="muted dl">條紅線</span>
+      </StringWeb>
     </figure>
+  </section>
+
+  <section class="stats">
+    <div v-for="s in stats" :key="s.n" class="card stat">
+      <strong>{{ s.n }}</strong>
+      <span class="st-t">{{ s.t }}</span>
+      <span class="muted st-d">{{ s.d }}</span>
+    </div>
   </section>
 
   <section class="card panel">
@@ -114,10 +151,12 @@ const scoring = [
   </section>
 
   <section class="modes">
+    <p class="eyebrow">01 / Modes</p>
     <h2>三種玩法</h2>
     <div class="grid">
       <article v-for="(m, i) in MODES" :key="m.id" class="mode" :class="{ main: i === 0 }">
         <span v-if="i === 0" class="badge">主打</span>
+        <span class="num">0{{ i + 1 }}</span>
         <h3>{{ m.name }}</h3>
         <p class="short">{{ m.short }}</p>
         <p class="muted small">{{ m.desc }}</p>
@@ -126,6 +165,7 @@ const scoring = [
   </section>
 
   <section class="scoring">
+    <p class="eyebrow">02 / Scoring</p>
     <h2>怎麼得分</h2>
     <div class="rows">
       <div v-for="s in scoring" :key="s.t" class="row">
@@ -150,74 +190,96 @@ const scoring = [
   align-items: center;
   padding: 16px 0 28px;
 }
-.kicker {
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 5px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-body);
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+}
+.stat strong {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.st-t {
+  font-weight: 700;
+  font-size: 14px;
+  margin-top: 4px;
+}
+.st-d {
+  font-size: 12px;
+}
+.num {
+  display: block;
+  font-weight: 600;
   font-size: 13px;
   color: var(--accent);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  margin: 0 0 8px;
+  margin-bottom: 6px;
+}
+.eyebrow + h2 {
+  margin-top: 8px;
 }
 .hero h1 {
   font-size: clamp(34px, 8vw, 52px);
-}
-.hero em {
-  font-style: normal;
-  color: var(--accent);
 }
 .lead {
   margin: 14px 0 0;
 }
 .demo {
   margin: 0;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 16px;
-  transform: rotate(1.5deg);
+  text-align: center;
 }
 .dq {
-  margin: 0 0 10px;
-  font-size: 13px;
-  color: var(--ink-soft);
-}
-.demo ul {
-  list-style: none;
   margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 6px;
-}
-.demo li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: var(--surface-2);
-}
-.demo li.hit {
-  background: var(--accent-soft);
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 18px;
+  min-height: 1.6em;
 }
 .dn {
-  font-size: 13px;
-  color: var(--ink-soft);
-  width: 36px;
-}
-.demo strong {
-  flex: 1;
+  display: block;
   font-family: var(--serif);
-}
-.plus {
-  color: var(--accent);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--thread);
 }
-.dfoot {
-  margin: 10px 0 0;
-  font-size: 13px;
-  color: var(--accent);
-  font-weight: 600;
+.dl {
+  font-size: 12px;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .panel {
@@ -366,7 +428,7 @@ h2 {
   background: var(--accent-soft);
   color: var(--accent);
   font-family: var(--serif);
-  font-weight: 900;
+  font-weight: 700;
   font-size: 18px;
 }
 .note {
@@ -377,14 +439,27 @@ h2 {
   .hero {
     grid-template-columns: 1fr;
   }
-  .demo {
-    transform: none;
-  }
   .grid {
     grid-template-columns: 1fr;
   }
+
 }
 @media (max-width: 480px) {
+  .stats {
+    gap: 8px;
+  }
+  .stat {
+    padding: 12px;
+  }
+  .stat strong {
+    font-size: 21px;
+  }
+  .st-t {
+    font-size: 12px;
+  }
+  .st-d {
+    display: none;
+  }
   .actions {
     grid-template-columns: 1fr;
   }

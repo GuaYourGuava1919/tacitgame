@@ -52,6 +52,20 @@ export function summarize(
   }
 }
 
+/** 把歷史回合的配對合併成帶權重的線 */
+export function aggregateEdges(history: RoundRecord[]) {
+  const m = new Map<string, { a: string; b: string; weight: number }>()
+  for (const h of history)
+    for (const [x, y] of h.pairs) {
+      const [a, b] = x < y ? [x, y] : [y, x]
+      const k = `${a}|${b}`
+      const e = m.get(k) ?? { a, b, weight: 0 }
+      e.weight++
+      m.set(k, e)
+    }
+  return [...m.values()]
+}
+
 export function verdict(index: number) {
   if (index >= 80) return '心有靈犀，根本是同一顆腦袋'
   if (index >= 60) return '默契十足，很懂彼此'
