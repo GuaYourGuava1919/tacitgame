@@ -305,14 +305,14 @@ function leave() {
 }
 .chip {
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 20px;
   padding: 2px 14px;
   border-bottom: 2px solid var(--thread);
 }
 .count {
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(34px, 9vw, 52px);
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -324,11 +324,11 @@ function leave() {
 .count-inline {
   margin: -8px 0 0;
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
 }
 .big {
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(22px, 6vw, 40px);
   line-height: 1.1;
   color: var(--thread);
@@ -350,7 +350,7 @@ function leave() {
   background: transparent;
   font-family: var(--serif);
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 400;
   text-align: center;
   padding: 8px 4px;
   outline: none;

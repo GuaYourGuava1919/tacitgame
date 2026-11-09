@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url'
 import { WebSocketServer } from 'ws'
 import { CATEGORY_LIST, drawQuestions } from './questions.js'
 
-const PORT = Number(process.env.PORT) || 3001
+// 預設 8787：避開常見的 3000/3001（Nuxt、Next 等開發伺服器）
+const PORT = Number(process.env.PORT) || 8787
 const MAX_PLAYERS = 8
 const MAX_CHAIN_ROUNDS = 300
 const MAX_CUSTOM = 40

@@ -13,6 +13,8 @@ const H = 1350
 
 export async function exportWebImage(input: ExportInput) {
   try {
+    // 先把會用到的字載進來，canvas 才畫得出粉圓
+    await document.fonts?.load('40px Huninn', '我們的默契網有點十足心靈犀分指數題')
     await document.fonts?.ready
   } catch {
     /* ignore */
@@ -21,14 +23,14 @@ export async function exportWebImage(input: ExportInput) {
   canvas.width = W
   canvas.height = H
   const ctx = canvas.getContext('2d')!
-  const serif = `'Noto Serif TC', 'Songti TC', serif`
-  const sans = `'Noto Sans TC', system-ui, sans-serif`
-  const red = '#b4472e'
+  const serif = `'Huninn', 'Noto Sans TC', sans-serif`
+  const sans = serif
+  const red = '#d23c27'
   const ink = '#4f1d08'
   const soft = '#856a57'
 
   // 紙張底色＋細紋
-  ctx.fillStyle = '#f9f5e8'
+  ctx.fillStyle = '#faf3e6'
   ctx.fillRect(0, 0, W, H)
   ctx.globalAlpha = 0.05
   for (let i = 0; i < 2600; i++) {
@@ -37,17 +39,29 @@ export async function exportWebImage(input: ExportInput) {
   }
   ctx.globalAlpha = 1
 
+  try {
+    const logo = new Image()
+    logo.src = '/brand/lingxi-logo.webp'
+    await logo.decode()
+    const lh = 70
+    const lw = (logo.width / logo.height) * lh
+    ctx.drawImage(logo, (W - lw) / 2, 30, lw, lh)
+  } catch {
+    /* logo 載入失敗就略過 */
+  }
+
   ctx.textAlign = 'center'
   ctx.fillStyle = red
   ctx.font = `700 34px ${sans}`
-  ctx.fillText(input.subtitle, W / 2, 120)
+  ctx.fillText(input.subtitle, W / 2, 150)
   ctx.fillStyle = ink
   ctx.font = `900 76px ${serif}`
-  ctx.fillText(input.title, W / 2, 210)
+  ctx.fillText(input.title, W / 2, 235)
 
   const cx = W / 2
-  const cy = 680
-  const R = 330
+  // 留空間給上方標題與下方評語
+  const cy = 715
+  const R = 270
   const n = input.players.length
   const start = n === 2 ? Math.PI : -Math.PI / 2
   const pos = new Map<string, { x: number; y: number; ux: number; uy: number }>()
@@ -57,7 +71,7 @@ export async function exportWebImage(input: ExportInput) {
   })
 
   ctx.setLineDash([4, 14])
-  ctx.strokeStyle = '#dcc9ac'
+  ctx.strokeStyle = '#d9b994'
   ctx.lineWidth = 3
   ctx.beginPath()
   ctx.arc(cx, cy, R, 0, Math.PI * 2)
@@ -73,33 +87,51 @@ export async function exportWebImage(input: ExportInput) {
     if (!A || !B) continue
     const mx = (A.x + B.x) / 2
     const my = (A.y + B.y) / 2
+    let qx = mx + (cx - mx) * 0.32
+    let qy = my + (cy - my) * 0.32 + 14
+    // 對角的兩人：線改成大幅彎開，避免穿過中間的數字
+    const dMid = Math.hypot(mx - cx, my - cy)
+    if (dMid < 80) {
+      const len = Math.hypot(B.x - A.x, B.y - A.y) || 1
+      const sag = (e.a < e.b ? 1 : -1) * (190 - dMid)
+      qx = mx + (-(B.y - A.y) / len) * sag
+      qy = my + ((B.x - A.x) / len) * sag
+    }
     ctx.globalAlpha = 0.85
     ctx.lineWidth = 4 + e.weight * 3.5
     ctx.beginPath()
     ctx.moveTo(A.x, A.y)
-    ctx.quadraticCurveTo(mx + (cx - mx) * 0.32, my + (cy - my) * 0.32 + 14, B.x, B.y)
+    ctx.quadraticCurveTo(qx, qy, B.x, B.y)
     ctx.stroke()
   }
   ctx.globalAlpha = 1
 
-  // 印章與名字
+  // 印章與名字（水彩爪印印章）
+  let seal: HTMLImageElement | null = null
+  try {
+    seal = new Image()
+    seal.src = '/brand/seal.webp'
+    await seal.decode()
+  } catch {
+    seal = null
+  }
   for (const p of input.players) {
     const P = pos.get(p.id)!
     ctx.save()
     ctx.translate(P.x, P.y)
     ctx.rotate(((p.id.length * 7) % 14 - 7) * (Math.PI / 180))
-    ctx.fillStyle = red
-    roundRect(ctx, -50, -50, 100, 100, 20)
-    ctx.fill()
-    ctx.fillStyle = '#fff'
-    ctx.font = `900 56px ${serif}`
-    ctx.textBaseline = 'middle'
-    ctx.fillText([...p.name][0] ?? '?', 0, 4)
+    if (seal) {
+      ctx.drawImage(seal, -66, -66, 132, 132)
+    } else {
+      ctx.fillStyle = red
+      roundRect(ctx, -50, -50, 100, 100, 20)
+      ctx.fill()
+    }
     ctx.restore()
 
     ctx.textBaseline = 'alphabetic'
-    const lx = P.x + P.ux * 92
-    const ly = P.y + P.uy * 92
+    const lx = P.x + P.ux * 100
+    const ly = P.y + P.uy * 100
     ctx.textAlign = Math.abs(P.ux) < 0.4 ? 'center' : P.ux > 0 ? 'left' : 'right'
     ctx.fillStyle = ink
     ctx.font = `700 34px ${sans}`
@@ -114,6 +146,11 @@ export async function exportWebImage(input: ExportInput) {
 
   ctx.textAlign = 'center'
   if (input.index !== null) {
+    // 數字底下墊一塊紙色，紅線不會干擾閱讀
+    ctx.fillStyle = 'rgba(250, 243, 230, 0.92)'
+    ctx.beginPath()
+    ctx.arc(cx, cy + 10, 118, 0, Math.PI * 2)
+    ctx.fill()
     ctx.fillStyle = ink
     ctx.font = `900 120px ${serif}`
     ctx.fillText(`${input.index}%`, cx, cy + 30)
@@ -124,10 +161,10 @@ export async function exportWebImage(input: ExportInput) {
 
   ctx.fillStyle = ink
   ctx.font = `900 54px ${serif}`
-  ctx.fillText(input.verdict, W / 2, 1170)
+  ctx.fillText(input.verdict, W / 2, 1222)
   ctx.fillStyle = soft
   ctx.font = `500 28px ${sans}`
-  ctx.fillText('靈犀・線上默契派對遊戲', W / 2, 1260)
+  ctx.fillText('靈犀・線上默契派對遊戲', W / 2, 1298)
 
   const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'))
   if (!blob) return

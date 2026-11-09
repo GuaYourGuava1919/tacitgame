@@ -20,14 +20,14 @@
 
 ```bash
 npm install
-npm run dev        # 同時啟動 Vite（前端）與 server/index.js（WebSocket :3001）
+npm run dev        # 同時啟動 Vite（前端）與 server/index.js（WebSocket :8787）
 ```
 
 ## 正式環境
 
 ```bash
 npm run build
-PORT=3001 npm start   # 同一個 port 同時提供網頁與 /ws
+PORT=8787 npm start   # 同一個 port 同時提供網頁與 /ws
 ```
 
 部署到能跑 Node 長連線的主機（Render、Railway、Fly.io、VPS）。房間狀態存在記憶體，重啟會清空。

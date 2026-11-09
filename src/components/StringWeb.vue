@@ -41,6 +41,8 @@ const props = withDefaults(
 const emit = defineEmits<{ pick: [id: string] }>()
 
 const C = 200
+// 每張網各自一個濾鏡 id（同頁可能有多張網）
+const fid = `rough-${Math.random().toString(36).slice(2, 8)}`
 const VB = { x: -90, y: -80, w: 580, h: 560 }
 
 function hash(s: string) {
@@ -107,8 +109,8 @@ const drawn = computed(() =>
 
 /** 文字放在節點外側 */
 function label(p: (typeof placed.value)[number]) {
-  if (p.center) return { x: p.x, y: p.y + 40, anchor: 'middle', dir: 'down' as const }
-  const off = 40
+  if (p.center) return { x: p.x, y: p.y + 48, anchor: 'middle', dir: 'down' as const }
+  const off = 46
   const x = p.x + p.ux * off
   const y = p.y + p.uy * off
   if (p.uy < -0.6) return { x, y: y - 4, anchor: 'middle', dir: 'up' as const }
@@ -117,15 +119,14 @@ function label(p: (typeof placed.value)[number]) {
 }
 
 const short = (w: string, n = 7) => ([...w].length > n ? [...w].slice(0, n - 1).join('') + '…' : w)
-const sealChar = (name: string) => [...name.trim()][0] ?? '?'
-const tilt = (id: string) => (hash(id) % 15) - 7
+const tilt = (id: string) => (hash(id) % 11) - 5
 
 function strokeWidth(e: WebEdge) {
   const w = e.weight ?? 1
-  if (e.kind === 'past') return 1 + w * 0.6
-  if (e.kind === 'final') return 1.6 + w * 1.4
-  if (e.kind === 'claim') return 1.6
-  return 3.2
+  if (e.kind === 'past') return 2 + w * 0.8
+  if (e.kind === 'final') return 3 + w * 1.8
+  if (e.kind === 'claim') return 2.6
+  return 5
 }
 </script>
 
@@ -146,7 +147,17 @@ function strokeWidth(e: WebEdge) {
         :transform="`rotate(-90 ${C} ${C})`"
       />
 
+      <defs>
+        <!-- 讓紅線有手繪的微微抖動，並在下緣加深色，像一條真的繩子 -->
+        <filter :id="fid" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" result="wobbly" />
+          <feDropShadow dx="0" dy="1.4" stdDeviation="0.5" class="cord-shadow" />
+        </filter>
+      </defs>
+
       <!-- 紅線 -->
+      <g :filter="`url(#${fid})`">
       <path
         v-for="e in drawn"
         :key="e.k"
@@ -156,6 +167,7 @@ function strokeWidth(e: WebEdge) {
         pathLength="1"
         :style="{ strokeWidth: strokeWidth(e), animationDelay: `${e.delay ?? 0}ms` }"
       />
+      </g>
 
       <!-- 印章 -->
       <g
@@ -169,10 +181,11 @@ function strokeWidth(e: WebEdge) {
         :style="{ transform: `translate(${p.x}px, ${p.y}px)` }"
         @click="p.node.clickable && emit('pick', p.node.id)"
       >
-        <circle v-if="p.node.clickable" r="34" class="halo" />
+        <circle v-if="p.node.me" r="33" class="me-disc" />
+        <circle v-if="p.node.clickable" r="37" class="halo" />
         <g :transform="`rotate(${tilt(p.node.id)}) scale(${p.center ? 1.25 : 1})`">
-          <rect x="-22" y="-22" width="44" height="44" rx="9" class="seal" />
-          <text class="seal-ch" y="1">{{ sealChar(p.node.name) }}</text>
+          <!-- 水彩爪印印章（public/brand/seal.webp） -->
+          <image href="/brand/seal.webp" x="-30" y="-30" width="60" height="60" class="seal-img" />
         </g>
         <title>{{ p.node.name }}{{ p.node.word ? `：${p.node.word}` : '' }}</title>
       </g>
@@ -235,22 +248,27 @@ svg {
 
 .ring {
   fill: none;
-  stroke: var(--line);
-  stroke-width: 1.5;
-  stroke-dasharray: 2 6;
+  stroke: var(--line-strong);
+  stroke-width: 2;
+  stroke-dasharray: 1 9;
+  stroke-linecap: round;
 }
 .ring-progress {
   fill: none;
-  stroke: var(--ink-soft);
-  stroke-width: 3;
+  stroke: var(--peach);
+  stroke-width: 5;
   stroke-linecap: round;
   stroke-dasharray: 1 1;
   transition: stroke-dashoffset 0.25s linear;
-  opacity: 0.55;
+  opacity: 0.8;
 }
 .ring-progress.low {
   stroke: var(--thread);
   opacity: 1;
+}
+.cord-shadow {
+  flood-color: var(--thread-deep);
+  flood-opacity: 0.55;
 }
 
 .thread {
@@ -259,7 +277,7 @@ svg {
   stroke-linecap: round;
 }
 .thread.past {
-  opacity: 0.22;
+  opacity: 0.25;
 }
 .thread.final {
   opacity: 0.85;
@@ -271,7 +289,6 @@ svg {
   stroke-dasharray: 1 1;
   stroke-dashoffset: 1;
   animation: draw 0.9s cubic-bezier(0.6, 0, 0.3, 1) forwards;
-  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--thread) 50%, transparent));
 }
 .thread.claim {
   stroke-dasharray: 0.02 0.03;
@@ -314,28 +331,21 @@ svg {
     transform: rotate(360deg);
   }
 }
-.seal {
-  fill: var(--surface);
-  stroke: var(--thread);
-  stroke-width: 2.5;
-  transition: fill 0.3s;
+.me-disc {
+  fill: var(--ladyfinger);
+  opacity: 0.55;
 }
-.seal-ch {
-  fill: var(--thread);
-  font-family: var(--serif);
-  font-weight: 900;
-  font-size: 24px;
-  text-anchor: middle;
-  dominant-baseline: central;
-  transition: fill 0.3s;
+/* 還沒作答：褪色，像還沒沾印泥 */
+.seal-img {
+  filter: grayscale(0.85) opacity(0.45);
+  transition: filter 0.35s;
 }
-.node.inked .seal,
-.node.hit .seal {
-  fill: var(--thread);
+.node.inked .seal-img,
+.node.hit .seal-img {
+  filter: none;
 }
-.node.inked .seal-ch,
-.node.hit .seal-ch {
-  fill: var(--thread-ink);
+.node.hit .seal-img {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--thread) 55%, transparent));
 }
 .node.inked > g {
   animation: stamp 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
@@ -349,7 +359,10 @@ svg {
   }
 }
 .node.off {
-  opacity: 0.35;
+  opacity: 0.4;
+}
+.node.off .seal-img {
+  filter: grayscale(1) opacity(0.5);
 }
 .node.off .seal {
   stroke-dasharray: 4 4;
@@ -363,7 +376,7 @@ svg {
   pointer-events: none;
 }
 .nm {
-  fill: var(--ink-soft);
+  fill: var(--ink-body);
   font-size: 15px;
   font-weight: 600;
 }
@@ -374,7 +387,7 @@ svg {
 .wd {
   fill: var(--ink);
   font-family: var(--serif);
-  font-weight: 900;
+  font-weight: 400;
   font-size: 24px;
 }
 .web.compact .nm {

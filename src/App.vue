@@ -27,7 +27,7 @@ function goHome() {
   <header class="top">
     <div class="wrap bar">
       <a class="logo" href="./" @click.prevent="goHome">
-        <span class="seal">犀</span>
+        <img class="logo-img" src="/brand/lingxi-logo.webp" alt="" width="103" height="32" />
         <span class="logo-name">靈犀</span>
         <span class="logo-sub hide-sm">Lingxi · 默契派對</span>
       </a>
@@ -98,7 +98,7 @@ function goHome() {
   align-items: center;
   gap: 10px;
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 20px;
   color: var(--ink);
   text-decoration: none;
@@ -117,16 +117,13 @@ function goHome() {
   padding-left: 10px;
   border-left: 1px solid var(--line-strong);
 }
-.seal {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
-  background: var(--thread);
-  color: var(--thread-ink);
-  font-size: 17px;
-  transform: rotate(-4deg);
+.logo-img {
+  height: 32px;
+  width: auto;
+  transition: transform 0.4s var(--ease);
+}
+.logo:hover .logo-img {
+  transform: rotate(-3deg) scale(1.04);
 }
 nav {
   display: flex;
@@ -158,6 +155,7 @@ nav .active {
 /* 緹拉米蘇工作室署名：樣式比照 tiramisu_SPA 頁尾 */
 .studio {
   --cocoa: #4f1d08;
+  font-family: var(--brand-sans);
   color: inherit;
   text-decoration: none;
   border-radius: 10px;

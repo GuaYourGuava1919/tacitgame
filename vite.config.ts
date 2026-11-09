@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     host: true,
     proxy: {
-      '/ws': { target: 'ws://localhost:3001', ws: true },
+      // 用 127.0.0.1 而不是 localhost：Windows 會先試 IPv6，可能連到別的程式
+      '/ws': { target: 'ws://127.0.0.1:8787', ws: true },
     },
   },
 })

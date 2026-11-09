@@ -144,7 +144,7 @@ h2 {
 }
 .pct {
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(32px, 9vw, 52px);
   line-height: 1;
   display: block;
@@ -215,7 +215,7 @@ h2 {
   display: grid;
   place-items: center;
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 40px;
   transform: rotate(-8deg);
   animation: stamp 0.45s cubic-bezier(0.2, 1.6, 0.4, 1) both;
@@ -229,7 +229,7 @@ h2 {
 .big-word {
   font-family: var(--serif);
   font-size: 34px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--thread);
   margin: 8px 0 0;
 }

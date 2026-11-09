@@ -258,14 +258,14 @@ const scoring = [
 .dq {
   margin: 0;
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 18px;
   min-height: 1.6em;
 }
 .dn {
   display: block;
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 40px;
   line-height: 1;
   color: var(--thread);
@@ -428,7 +428,7 @@ h2 {
   background: var(--accent-soft);
   color: var(--accent);
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 18px;
 }
 .note {

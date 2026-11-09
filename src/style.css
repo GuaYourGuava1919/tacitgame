@@ -1,63 +1,74 @@
 /*
- * 靈犀 — 設計語言沿用 緹拉米蘇 Tiramisu Web Studio
- * 奶油底、可可棕字、薄荷葉綠為操作色；紅線（赤陶紅）是遊戲本身的識別色
+ * 靈犀 — 字體與排版沿用 緹拉米蘇 Tiramisu Web Studio；
+ * 配色比照 tiramisu「從自己的 logo 取色」的做法：取自水彩爪印印章與紅繩。
  */
 :root {
-  --bg: #f9f5e8; /* 奶油底 */
-  --surface: #fffdf8; /* 卡片 */
-  --surface-2: #f2e9d6; /* 淡可可 */
+  --bg: #faf3e6; /* 奶油紙 */
+  --surface: #fffaf1;
+  --surface-2: #f6e6d0; /* 印章側面的淡杏 */
   --ink: #4f1d08; /* 可可棕 */
-  --ink-body: #5c3a28; /* 摩卡內文 */
-  --ink-soft: #856a57; /* 拿鐵灰 */
-  --line: #ece1cc;
-  --line-strong: #dcc9ac;
+  --ink-body: #5c3a28;
+  --ink-soft: #8a6a55;
+  --line: #ecd9c0;
+  --line-strong: #d9b994;
+  --outline: #7a3b1e; /* logo 外框的深棕 */
 
-  --accent: #5b7536; /* 薄荷葉綠：按鈕、標籤 */
-  --accent-deep: #3f5424;
+  /* 取自 logo：印章紅、側面杏橘 */
+  --accent: #c44a2c;
+  --accent-deep: #8f3119;
   --accent-ink: #fff;
-  --accent-soft: #edf2e2;
-  --accent-rgb: 91, 117, 54;
+  --accent-soft: #fbe3d2;
+  --accent-rgb: 196, 74, 44;
+  --peach: #eeb07a;
 
-  --thread: #b4472e; /* 紅線：印章、連線 */
+  --thread: #d23c27; /* logo 紅繩 */
+  --thread-deep: #8f2416;
   --thread-ink: #fff;
-  --thread-soft: #f6e0d6;
+  --thread-soft: #f8dccf;
 
-  --ladyfinger: #e8c9a0; /* 手指餅乾：螢光筆底線 */
-  --ok: #5b7536;
-  --ok-soft: #edf2e2;
+  --ladyfinger: #f0c592;
+  --ok: #c44a2c;
+  --ok-soft: #fbe3d2;
 
-  --shadow: 0 6px 16px rgb(79 29 8 / 7%);
-  --shadow-lg: 0 14px 36px rgb(79 29 8 / 12%);
+  --shadow: 0 6px 16px rgb(122 59 30 / 9%);
+  --shadow-lg: 0 14px 36px rgb(122 59 30 / 14%);
   --radius: 16px;
   --radius-md: 10px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --serif: 'Noto Serif TC', Georgia, 'Songti TC', 'PMingLiU', serif;
-  --sans: 'Noto Sans TC', -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  /* 圓體：jf open 粉圓（Huninn），只有一個字重 */
+  --round: 'Huninn', 'jf-openhuninn', 'Yuanti TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --serif: var(--round);
+  --sans: var(--round);
+  /* 緹拉米蘇署名維持工作室自己的字體 */
+  --brand-sans: 'Noto Sans TC', -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
   color-scheme: light;
 }
 
 /* 深色：深焙巧克力 */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #2e1508;
-    --surface: #3a1d0e;
-    --surface-2: #47261a;
-    --ink: #f6e9d6;
-    --ink-body: #e6d2bc;
-    --ink-soft: #c4a98f;
-    --line: #553521;
-    --line-strong: #6b4630;
-    --accent: #a3c06f;
-    --accent-deep: #c0d898;
-    --accent-ink: #1f2a10;
-    --accent-soft: #34401f;
-    --accent-rgb: 163, 192, 111;
-    --thread: #e8805f;
-    --thread-ink: #2e1508;
+    --bg: #2a140a;
+    --surface: #371c10;
+    --surface-2: #452616;
+    --ink: #f8e8d4;
+    --ink-body: #ead2b8;
+    --ink-soft: #c8a88c;
+    --line: #573420;
+    --line-strong: #74472c;
+    --outline: #b9784f;
+    --accent: #ea7556;
+    --accent-deep: #a8432a;
+    --accent-ink: #2a140a;
+    --accent-soft: #5a2a1a;
+    --accent-rgb: 234, 117, 86;
+    --peach: #c9895a;
+    --thread: #f2694f;
+    --thread-deep: #a33520;
+    --thread-ink: #2a140a;
     --thread-soft: #5a2a1a;
-    --ladyfinger: #6b4630;
-    --ok: #a3c06f;
-    --ok-soft: #34401f;
+    --ladyfinger: #74472c;
+    --ok: #ea7556;
+    --ok-soft: #5a2a1a;
     --shadow: 0 6px 16px rgb(0 0 0 / 25%);
     --shadow-lg: 0 14px 36px rgb(0 0 0 / 35%);
     color-scheme: dark;
@@ -65,25 +76,28 @@
 }
 
 :root[data-theme='dark'] {
-  --bg: #2e1508;
-  --surface: #3a1d0e;
-  --surface-2: #47261a;
-  --ink: #f6e9d6;
-  --ink-body: #e6d2bc;
-  --ink-soft: #c4a98f;
-  --line: #553521;
-  --line-strong: #6b4630;
-  --accent: #a3c06f;
-  --accent-deep: #c0d898;
-  --accent-ink: #1f2a10;
-  --accent-soft: #34401f;
-  --accent-rgb: 163, 192, 111;
-  --thread: #e8805f;
-  --thread-ink: #2e1508;
+  --bg: #2a140a;
+  --surface: #371c10;
+  --surface-2: #452616;
+  --ink: #f8e8d4;
+  --ink-body: #ead2b8;
+  --ink-soft: #c8a88c;
+  --line: #573420;
+  --line-strong: #74472c;
+  --outline: #b9784f;
+  --accent: #ea7556;
+  --accent-deep: #a8432a;
+  --accent-ink: #2a140a;
+  --accent-soft: #5a2a1a;
+  --accent-rgb: 234, 117, 86;
+  --peach: #c9895a;
+  --thread: #f2694f;
+  --thread-deep: #a33520;
+  --thread-ink: #2a140a;
   --thread-soft: #5a2a1a;
-  --ladyfinger: #6b4630;
-  --ok: #a3c06f;
-  --ok-soft: #34401f;
+  --ladyfinger: #74472c;
+  --ok: #ea7556;
+  --ok-soft: #5a2a1a;
   --shadow: 0 6px 16px rgb(0 0 0 / 25%);
   --shadow-lg: 0 14px 36px rgb(0 0 0 / 35%);
   color-scheme: dark;
@@ -107,18 +121,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 頂部暖色光暈，呼應 tiramisu 首頁 */
+/* 水彩暈染＋紙紋（呼應 logo 的水彩質感） */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background: radial-gradient(
-    120% 60% at 75% -10%,
-    color-mix(in srgb, var(--ladyfinger) 35%, transparent),
-    transparent 60%
-  );
+  background:
+    radial-gradient(60% 40% at 85% -5%, color-mix(in srgb, var(--peach) 30%, transparent), transparent 70%),
+    radial-gradient(50% 35% at -5% 35%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.48 0 0 0 0 0.3 0 0 0 0 0.15 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 #app {
@@ -133,7 +146,9 @@ h1,
 h2,
 h3 {
   font-family: var(--serif);
-  font-weight: 600;
+  font-weight: 400;
+  /* 粉圓只有一個字重：大字不要讓瀏覽器硬加粗，會糊成一團 */
+  font-synthesis: none;
   line-height: 1.3;
   letter-spacing: 0.01em;
   margin: 0;
@@ -179,7 +194,7 @@ button {
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   border-radius: var(--radius);
   padding: 22px;
   transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
@@ -192,22 +207,25 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid var(--line-strong);
+  border: 1.5px solid var(--line-strong);
   background: var(--surface);
   color: var(--ink);
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   padding: 11px 22px;
   font-weight: 600;
   font-size: 15px;
   line-height: 1.2;
-  transition: all 0.25s var(--ease);
+  box-shadow: 0 3px 0 var(--line-strong);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), background 0.2s;
 }
 .btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  border-color: var(--ink);
+  box-shadow: 0 4px 0 var(--line-strong);
 }
+/* 按下去像蓋章：往下沉 */
 .btn:active:not(:disabled) {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--line-strong);
 }
 .btn:disabled {
   opacity: 0.45;
@@ -215,28 +233,35 @@ button {
 }
 .btn.primary {
   background: var(--accent);
-  border-color: var(--accent);
+  border-color: var(--accent-deep);
   color: var(--accent-ink);
+  box-shadow: 0 3px 0 var(--accent-deep);
 }
 .btn.primary:hover:not(:disabled) {
-  background: var(--accent-deep);
-  border-color: var(--accent-deep);
-  box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.35);
+  box-shadow: 0 4px 0 var(--accent-deep), 0 8px 18px rgba(var(--accent-rgb), 0.25);
+}
+.btn.primary:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--accent-deep);
 }
 .btn.ghost {
   background: transparent;
   border-color: transparent;
   color: var(--ink-soft);
   padding: 6px 10px;
+  box-shadow: none;
 }
-.btn.ghost:hover:not(:disabled) {
+.btn.ghost:hover:not(:disabled),
+.btn.ghost:active:not(:disabled) {
   color: var(--ink);
   border-color: transparent;
+  box-shadow: none;
+  transform: none;
 }
 .btn.on {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-deep);
+  box-shadow: 0 3px 0 var(--accent);
 }
 .btn.block {
   width: 100%;
@@ -244,7 +269,7 @@ button {
 
 .input {
   width: 100%;
-  border: 1px solid var(--line-strong);
+  border: 1.5px solid var(--line-strong);
   background: var(--surface);
   border-radius: var(--radius-md);
   padding: 12px 14px;

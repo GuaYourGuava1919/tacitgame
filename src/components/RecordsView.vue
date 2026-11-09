@@ -89,7 +89,7 @@ summary {
 }
 .hl {
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 20px;
   color: var(--thread);
 }

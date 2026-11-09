@@ -203,7 +203,7 @@ h3 {
 .code {
   display: block;
   font-family: var(--serif);
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(17px, 4.6vw, 24px);
   letter-spacing: 0.04em;
   line-height: 1.2;
