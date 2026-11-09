@@ -29,10 +29,10 @@ function addQ() {
 }
 
 async function share() {
-  const text = `來玩靈犀，測測我們有多少默契！房號 ${props.room.code}`
+  const text = `來玩紅線挑戰，測測我們有多少默契！房號 ${props.room.code}`
   try {
     if (navigator.share) {
-      await navigator.share({ title: '靈犀', text, url: shareUrl.value })
+      await navigator.share({ title: '紅線挑戰', text, url: shareUrl.value })
       return
     }
   } catch {
@@ -91,6 +91,7 @@ const nodes = computed<WebNode[]>(() =>
           <span>{{ m.short }}</span>
         </button>
       </div>
+      <p class="mode-desc muted">{{ MODES.find((m) => m.id === s.mode)?.desc }}</p>
 
       <template v-if="usesQuestions">
         <span class="label">題庫</span>
@@ -292,17 +293,52 @@ h3 {
   background: var(--surface-2);
   font-size: 14px;
 }
+/* 開始按鈕黏在畫面底部：設定再長也不用滑到最下面才能開始 */
 .go {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
   text-align: center;
-  padding: 8px 0;
+  margin: 0 -20px;
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 70%, transparent);
+}
+.go p {
+  margin: 0;
+}
+.mode-desc {
+  margin: -6px 0 4px;
+  font-size: 13px;
 }
 .btn.big {
   padding: 14px 40px;
   font-size: 18px;
 }
 @media (max-width: 520px) {
+  /* 手機：模式改成一排三個小按鈕，說明顯示在下方 */
   .modes {
-    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .mode {
+    align-items: center;
+    text-align: center;
+    padding: 10px 4px;
+  }
+  .mode strong {
+    font-size: 15px;
+  }
+  .mode span {
+    display: none;
+  }
+  .seg {
+    gap: 6px;
+  }
+  .seg .btn {
+    padding: 8px 11px;
+    font-size: 15px;
+  }
+  .btn.big {
+    width: 100%;
   }
 }
 </style>

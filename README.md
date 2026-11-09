@@ -1,4 +1,4 @@
-# 靈犀：線上默契派對遊戲
+# 紅線挑戰：線上默契派對遊戲
 
 2 到 8 人一起回答同一題，看看誰跟誰最有默契。
 
@@ -25,7 +25,7 @@ npm run dev        # 同時啟動 Vite（前端）與 server/index.js（WebSocke
 
 ## 部署
 
-靈犀需要一個**常駐的 Node 伺服器**（WebSocket 即時連線）。GitHub Pages、Vercel 這類靜態／serverless 主機**跑不了遊戲伺服器**，只能放前端。
+紅線挑戰需要一個**常駐的 Node 伺服器**（WebSocket 即時連線）。GitHub Pages、Vercel 這類靜態／serverless 主機**跑不了遊戲伺服器**，只能放前端。
 
 ### 做法 A：全部放 Render（最簡單）
 

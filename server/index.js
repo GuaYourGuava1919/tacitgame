@@ -1,4 +1,4 @@
-// 靈犀 — 即時房間伺服器（記憶體內狀態，單一程序）
+// 紅線挑戰 — 即時房間伺服器（記憶體內狀態，單一程序）
 import { createServer } from 'node:http'
 import { readFile, stat } from 'node:fs/promises'
 import { extname, join, normalize, resolve } from 'node:path'
@@ -521,7 +521,7 @@ const server = createServer(async (req, res) => {
     if (!info) {
       res
         .writeHead(200, { 'content-type': 'text/plain; charset=utf-8' })
-        .end('靈犀伺服器運作中。開發時請用 npm run dev 開啟前端。')
+        .end('紅線挑戰伺服器運作中。開發時請用 npm run dev 開啟前端。')
       return
     }
     res.writeHead(200, { 'content-type': MIME[extname(file)] ?? 'application/octet-stream' })
@@ -642,5 +642,5 @@ setInterval(() => {
 }, 60 * 1000)
 
 server.listen(PORT, () => {
-  console.log(`靈犀伺服器：http://localhost:${PORT}  (WebSocket: /ws)`)
+  console.log(`紅線挑戰伺服器：http://localhost:${PORT}  (WebSocket: /ws)`)
 })

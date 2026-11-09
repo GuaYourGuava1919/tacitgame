@@ -121,6 +121,12 @@ watch(
   { immediate: true },
 )
 
+/** 手機鍵盤彈出後，把輸入框捲到畫面中間，避免被鍵盤擋住 */
+function keepVisible(e: FocusEvent) {
+  const el = e.target as HTMLElement
+  window.setTimeout(() => el.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300)
+}
+
 function submit() {
   const w = draft.value.trim()
   if (w && props.room.myWord === null) api.submit(w)
@@ -179,6 +185,7 @@ function leave() {
           v-model="draft"
           class="ink-input"
           maxlength="20"
+          @focus="keepVisible"
           :placeholder="mode === 'guess' && !iAmHero ? `${hero?.name} 會寫…` : '落筆寫下答案'"
           autocomplete="off"
           enterkeyhint="send"

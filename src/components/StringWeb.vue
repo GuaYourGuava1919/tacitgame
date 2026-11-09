@@ -110,8 +110,8 @@ const drawn = computed(() =>
 
 /** 文字放在節點外側 */
 function label(p: (typeof placed.value)[number]) {
-  if (p.center) return { x: p.x, y: p.y + 48, anchor: 'middle', dir: 'down' as const }
-  const off = 46
+  if (p.center) return { x: p.x, y: p.y + 54, anchor: 'middle', dir: 'down' as const }
+  const off = 52
   const x = p.x + p.ux * off
   const y = p.y + p.uy * off
   if (p.uy < -0.6) return { x, y: y - 4, anchor: 'middle', dir: 'up' as const }
@@ -182,11 +182,15 @@ function strokeWidth(e: WebEdge) {
         :style="{ transform: `translate(${p.x}px, ${p.y}px)` }"
         @click="p.node.clickable && emit('pick', p.node.id)"
       >
+        <!-- 看不見的大點擊區：手機上手指比印章大 -->
+        <circle v-if="p.node.clickable" r="52" class="hit-area" />
+        <g class="sz">
         <circle v-if="p.node.me" r="33" class="me-disc" />
         <circle v-if="p.node.clickable" r="37" class="halo" />
         <g :transform="`rotate(${tilt(p.node.id)}) scale(${p.center ? 1.25 : 1})`">
           <!-- 水彩爪印印章（public/brand/seal.webp） -->
           <image :href="asset('brand/seal.webp')" x="-30" y="-30" width="60" height="60" class="seal-img" />
+        </g>
         </g>
         <title>{{ p.node.name }}{{ p.node.word ? `：${p.node.word}` : '' }}</title>
       </g>
@@ -332,6 +336,9 @@ svg {
     transform: rotate(360deg);
   }
 }
+.hit-area {
+  fill: transparent;
+}
 .me-disc {
   fill: var(--ladyfinger);
   opacity: 0.55;
@@ -398,13 +405,16 @@ svg {
   font-size: 28px;
 }
 @media (max-width: 520px) {
+  .sz {
+    scale: 1.25;
+  }
   .web .nm,
   .web.compact .nm {
-    font-size: 21px;
+    font-size: 24px;
   }
   .web .wd,
   .web.compact .wd {
-    font-size: 29px;
+    font-size: 32px;
   }
 }
 .wd.hit {

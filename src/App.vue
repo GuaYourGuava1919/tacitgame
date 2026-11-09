@@ -29,8 +29,7 @@ function goHome() {
     <div class="wrap bar">
       <a class="logo" href="./" @click.prevent="goHome">
         <img class="logo-img" :src="asset('brand/lingxi-logo.webp')" alt="" width="103" height="32" />
-        <span class="logo-name">靈犀</span>
-        <span class="logo-sub hide-sm">Lingxi · 默契派對</span>
+        <span class="logo-name">紅線挑戰</span>
       </a>
       <nav>
         <button
@@ -61,7 +60,7 @@ function goHome() {
 
   <footer class="wrap foot muted">
     <div class="foot-left">
-      <span>靈犀：心有靈犀一點通</span>
+      <span>紅線挑戰：答得一樣，就牽起一條紅線</span>
       <span v-if="!net.connected" class="offline">● 連線中…</span>
     </div>
     <a
@@ -95,31 +94,25 @@ function goHome() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
+  min-height: 56px;
+  padding-block: 8px;
 }
 .logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
   font-family: var(--serif);
   font-weight: 400;
-  font-size: 20px;
+  font-size: 16px;
+  line-height: 1.2;
   color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
 }
 .logo-name {
   letter-spacing: 0.08em;
-}
-.logo-sub {
-  font-family: var(--sans);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  padding-left: 10px;
-  border-left: 1px solid var(--line-strong);
+  white-space: nowrap;
 }
 .logo-img {
   height: 32px;

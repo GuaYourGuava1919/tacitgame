@@ -73,6 +73,7 @@ const scoring = [
 </script>
 
 <template>
+  <div class="home">
   <section class="hero">
     <div class="copy">
       <p class="pill"><span class="dot" />默契問答・猜你會說・2 到 8 人・免費</p>
@@ -180,6 +181,7 @@ const scoring = [
       題庫有 210 題、7 種主題，也可以在房間裡自己出題，例如只有你們才懂的題目。
     </p>
   </section>
+  </div>
 </template>
 
 <style scoped>
@@ -436,13 +438,48 @@ h2 {
 }
 
 @media (max-width: 640px) {
+  /* 手機：主要動作（取暱稱、建立/加入房間）往前排，不用滑過示意動畫和數據卡 */
+  .home {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
   .hero {
-    grid-template-columns: 1fr;
+    display: contents;
+  }
+  .copy {
+    order: 1;
+    padding-top: 4px;
+  }
+  .panel {
+    order: 2;
+  }
+  .demo {
+    order: 3;
+  }
+  .stats {
+    order: 4;
+    margin-bottom: 0;
+  }
+  .modes {
+    order: 5;
+  }
+  .scoring {
+    order: 6;
+  }
+  .modes,
+  .scoring {
+    margin-top: 10px;
+  }
+  .hero h1 {
+    font-size: 36px;
+  }
+  .lead {
+    margin-top: 10px;
   }
   .grid {
     grid-template-columns: 1fr;
   }
-
 }
 @media (max-width: 480px) {
   .stats {

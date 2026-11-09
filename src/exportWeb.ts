@@ -15,7 +15,7 @@ const H = 1350
 export async function exportWebImage(input: ExportInput) {
   try {
     // 先把會用到的字載進來，canvas 才畫得出粉圓
-    await document.fonts?.load('40px Huninn', '我們的默契網有點十足心靈犀分指數題')
+    await document.fonts?.load('40px Huninn', '我們的默契網有點十足心靈犀分指數題紅線挑戰')
     await document.fonts?.ready
   } catch {
     /* ignore */
@@ -165,11 +165,11 @@ export async function exportWebImage(input: ExportInput) {
   ctx.fillText(input.verdict, W / 2, 1222)
   ctx.fillStyle = soft
   ctx.font = `500 28px ${sans}`
-  ctx.fillText('靈犀・線上默契派對遊戲', W / 2, 1298)
+  ctx.fillText('紅線挑戰・線上默契派對遊戲', W / 2, 1298)
 
   const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'))
   if (!blob) return
-  const file = new File([blob], 'lingxi-web.png', { type: 'image/png' })
+  const file = new File([blob], 'red-thread-web.png', { type: 'image/png' })
   try {
     if (navigator.canShare?.({ files: [file] })) {
       await navigator.share({ files: [file], title: '我們的默契網' })
@@ -181,7 +181,7 @@ export async function exportWebImage(input: ExportInput) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = 'lingxi-web.png'
+  a.download = 'red-thread-web.png'
   a.click()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }

@@ -28,7 +28,7 @@ async function saveImage() {
   try {
     await exportWebImage({
       title: mode.value === 'chain' ? '想到一起了' : '我們的默契網',
-      subtitle: `靈犀・${mode.value === 'guess' ? '猜你會說' : mode.value === 'chain' ? '同詞聯想' : '默契問答'}${mode.value === 'chain' ? '' : '・' + props.room.categoryName}`,
+      subtitle: `紅線挑戰・${mode.value === 'guess' ? '猜你會說' : mode.value === 'chain' ? '同詞聯想' : '默契問答'}${mode.value === 'chain' ? '' : '・' + props.room.categoryName}`,
       index: mode.value === 'chain' ? null : sum.value.index,
       verdict: mode.value === 'chain' ? chainWord.value : verdict(sum.value.index),
       players: props.room.players.map((p) => ({
