@@ -11,3 +11,6 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
+      # 查看 /stats?token=... 用；Render 會自動產生，到 Environment 分頁看值
+      - key: STATS_TOKEN
+        generateValue: true

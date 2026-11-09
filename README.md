@@ -41,6 +41,12 @@ npm run dev        # 同時啟動 Vite（前端）與 server/index.js（WebSocke
 
 > Render 免費方案閒置約 15 分鐘會休眠，之後第一次連線要等 30–60 秒喚醒；網頁會顯示「連不上遊戲伺服器」並自動重試。
 
+### 監控流量
+
+- **Logs**：伺服器每 5 分鐘印一行 `[stats]`，內容有線上人數、房間數、這 5 分鐘送出的流量（ws／靜態分開算）、啟動以來的累計量和峰值人數。沒有人在線時不印。
+- **`/stats`**：回傳 JSON 格式的即時數字。網址是 `https://你的網址/stats?token=STATS_TOKEN`，token 到 Render 服務的 **Environment** 分頁查看。沒有設定 token 時，只有本機（`http://localhost:8787/stats`）看得到。
+- 這些數字存在記憶體裡，伺服器重啟或休眠後會歸零。每月的累計流量請看 Render 的 Billing / Usage 頁面。
+
 ### 部署在子路徑（例如 GitHub Pages 的 `/tacitgame/`）
 
 建置時加上 `BASE_PATH=/tacitgame/`，並同樣設定 `VITE_WS_URL`。

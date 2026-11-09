@@ -24,6 +24,24 @@ const sockets = new Map()
 /** 隨機配對佇列 */
 let matchQueue = []
 
+// ---------- 流量統計（記憶體內，重啟歸零） ----------
+
+const STATS_TOKEN = process.env.STATS_TOKEN || ''
+const STATS_LOG_MS = 5 * 60 * 1000
+const newCounters = () => ({ wsOutBytes: 0, wsOutMsgs: 0, wsInBytes: 0, wsInMsgs: 0, httpOutBytes: 0, httpReqs: 0 })
+const stats = {
+  startedAt: Date.now(),
+  total: newCounters(),
+  /** 上次寫 log 之後的累計 */
+  window: newCounters(),
+  peakPlayers: 0,
+}
+function count(field, n) {
+  stats.total[field] += n
+  stats.window[field] += n
+}
+const mb = (b) => (b / 1e6).toFixed(2)
+
 // ---------- 工具 ----------
 
 function makeCode() {
@@ -57,7 +75,12 @@ function shuffle(arr) {
 
 function send(clientId, msg) {
   const ws = sockets.get(clientId)
-  if (ws && ws.readyState === ws.OPEN) ws.send(JSON.stringify(msg))
+  if (ws && ws.readyState === ws.OPEN) {
+    const data = JSON.stringify(msg)
+    count('wsOutBytes', Buffer.byteLength(data))
+    count('wsOutMsgs', 1)
+    ws.send(data)
+  }
 }
 
 // ---------- 房間 ----------
@@ -507,7 +530,13 @@ const MIME = {
 
 const server = createServer(async (req, res) => {
   try {
-    const urlPath = decodeURIComponent(new URL(req.url, 'http://x').pathname)
+    const url = new URL(req.url, 'http://x')
+    const urlPath = decodeURIComponent(url.pathname)
+    if (urlPath === '/stats') {
+      handleStats(req, res, url)
+      return
+    }
+    count('httpReqs', 1)
     let file = normalize(join(DIST, urlPath))
     if (!file.startsWith(DIST)) {
       res.writeHead(403).end()
@@ -524,8 +553,10 @@ const server = createServer(async (req, res) => {
         .end('紅線挑戰伺服器運作中。開發時請用 npm run dev 開啟前端。')
       return
     }
+    const body = await readFile(file)
+    count('httpOutBytes', body.length)
     res.writeHead(200, { 'content-type': MIME[extname(file)] ?? 'application/octet-stream' })
-    res.end(await readFile(file))
+    res.end(body)
   } catch {
     res.writeHead(500).end()
   }
@@ -540,6 +571,8 @@ wss.on('connection', (ws) => {
   let clientId = null
 
   ws.on('message', (raw) => {
+    count('wsInBytes', raw.length)
+    count('wsInMsgs', 1)
     let msg
     try {
       msg = JSON.parse(String(raw))
@@ -640,6 +673,64 @@ setInterval(() => {
     }
   }
 }, 60 * 1000)
+
+// ---------- 統計輸出 ----------
+
+function liveCounts() {
+  let playing = 0
+  const modes = { quiz: 0, guess: 0, chain: 0 }
+  for (const room of rooms.values()) {
+    playing += room.connected.length
+    modes[room.mode]++
+  }
+  return { online: sockets.size, playing, rooms: rooms.size, matching: matchQueue.length, modes }
+}
+
+// 每秒取樣一次峰值人數（成本很低）
+setInterval(() => {
+  stats.peakPlayers = Math.max(stats.peakPlayers, sockets.size)
+}, 1000).unref()
+
+/** 沒設 STATS_TOKEN 時只允許本機查看 */
+function handleStats(req, res, url) {
+  const local = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress)
+  const ok = STATS_TOKEN ? url.searchParams.get('token') === STATS_TOKEN : local
+  if (!ok) {
+    res.writeHead(404).end()
+    return
+  }
+  const t = stats.total
+  const body = {
+    uptimeMin: Math.round((Date.now() - stats.startedAt) / 60000),
+    ...liveCounts(),
+    peakOnline: stats.peakPlayers,
+    sinceStart: {
+      ...t,
+      wsOutMB: +mb(t.wsOutBytes),
+      httpOutMB: +mb(t.httpOutBytes),
+      totalOutMB: +mb(t.wsOutBytes + t.httpOutBytes),
+    },
+    memoryMB: Math.round(process.memoryUsage().rss / 1e6),
+  }
+  res
+    .writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' })
+    .end(JSON.stringify(body, null, 2))
+}
+
+// 定期寫進 log（Render 的 Logs 分頁看得到）；完全沒動靜時不寫
+setInterval(() => {
+  const w = stats.window
+  const t = stats.total
+  const c = liveCounts()
+  if (c.online || w.wsInMsgs || w.httpReqs) {
+    console.log(
+      `[stats] 線上 ${c.online} 人 / ${c.rooms} 房 / 配對中 ${c.matching}` +
+        ` | 5分鐘送出 ${mb(w.wsOutBytes + w.httpOutBytes)} MB（ws ${mb(w.wsOutBytes)} / 靜態 ${mb(w.httpOutBytes)}）` +
+        ` 收到 ${w.wsInMsgs} 則 | 啟動以來 ${mb(t.wsOutBytes + t.httpOutBytes)} MB，峰值 ${stats.peakPlayers} 人`,
+    )
+  }
+  stats.window = newCounters()
+}, STATS_LOG_MS).unref()
 
 server.listen(PORT, () => {
   console.log(`紅線挑戰伺服器：http://localhost:${PORT}  (WebSocket: /ws)`)
