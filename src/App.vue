@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { api, connect, net } from './net'
+import { asset } from './asset'
 import { cycleTheme, theme } from './theme'
 import HomeView from './components/HomeView.vue'
 import RoomView from './components/RoomView.vue'
@@ -27,7 +28,7 @@ function goHome() {
   <header class="top">
     <div class="wrap bar">
       <a class="logo" href="./" @click.prevent="goHome">
-        <img class="logo-img" src="/brand/lingxi-logo.webp" alt="" width="103" height="32" />
+        <img class="logo-img" :src="asset('brand/lingxi-logo.webp')" alt="" width="103" height="32" />
         <span class="logo-name">靈犀</span>
         <span class="logo-sub hide-sm">Lingxi · 默契派對</span>
       </a>
@@ -50,6 +51,9 @@ function goHome() {
   </header>
 
   <main class="wrap main">
+    <p v-if="net.failed && !net.connected" class="down" role="alert">
+      連不上遊戲伺服器，暫時無法建立或加入房間。會自動重試，請稍候再試。
+    </p>
     <RecordsView v-if="page === 'records'" @back="goHome" />
     <RoomView v-else-if="net.room" :room="net.room" />
     <HomeView v-else />
@@ -67,7 +71,7 @@ function goHome() {
       rel="noopener"
       aria-label="由緹拉米蘇 Tiramisu Web Studio 製作（開啟工作室網站）"
     >
-      <img src="/brand/tiramisu-icon.webp" alt="" width="36" height="36" loading="lazy" />
+      <img :src="asset('brand/tiramisu-icon.webp')" alt="" width="36" height="36" loading="lazy" />
       <div>
         <span class="made">Made by</span>
         <span class="studio-name">緹拉米蘇 <span class="studio-en">Tiramisu Web Studio</span></span>
@@ -207,6 +211,15 @@ nav .active {
   text-transform: uppercase;
   opacity: 0.75;
   margin-left: 4px;
+}
+.down {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  font-size: 14px;
 }
 .offline {
   color: var(--accent);

@@ -113,6 +113,8 @@ export const net = reactive({
   room: null as RoomView | null,
   clockOffset: 0,
   matching: false,
+  /** 一直連不上遊戲伺服器 */
+  failed: false,
   error: '',
   name: storage('lx.name'),
   clientId: getClientId(),
@@ -133,11 +135,28 @@ function raw(msg: object) {
   if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(msg))
 }
 
-export function connect() {
+/**
+ * 遊戲伺服器位址：
+ * - 前端與伺服器同一台（npm start、開發模式）→ 用同網域的 /ws
+ * - 前端放 GitHub Pages / Vercel、伺服器放 Render 等 → 建置時設定 VITE_WS_URL=wss://你的伺服器/ws
+ */
+function wsUrl() {
+  const fromEnv = import.meta.env.VITE_WS_URL as string | undefined
+  if (fromEnv) return fromEnv
   const proto = location.protocol === 'https:' ? 'wss' : 'ws'
-  ws = new WebSocket(`${proto}://${location.host}/ws`)
+  return `${proto}://${location.host}/ws`
+}
+
+export function connect() {
+  const sock = new WebSocket(wsUrl())
+  ws = sock
+  // 6 秒內沒連上就當作失敗（有些主機不回應，連線會一直卡著）
+  const timer = window.setTimeout(() => sock.readyState !== WebSocket.OPEN && sock.close(), 6000)
+  sock.addEventListener('open', () => clearTimeout(timer))
+  sock.addEventListener('close', () => clearTimeout(timer))
   ws.onopen = () => {
     net.connected = true
+    net.failed = false
     retry = 0
     raw({ type: 'hello', clientId: net.clientId })
     if (wantRoom) raw({ type: 'join', code: wantRoom, name: net.name })
@@ -168,6 +187,8 @@ export function connect() {
   ws.onclose = () => {
     net.connected = false
     ws = null
+    // 連續失敗幾次就告訴使用者，而不是一直默默轉圈
+    if (retry >= 3) net.failed = true
     setTimeout(connect, Math.min(1000 * 2 ** retry++, 8000))
   }
 }

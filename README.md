@@ -23,14 +23,34 @@ npm install
 npm run dev        # 同時啟動 Vite（前端）與 server/index.js（WebSocket :8787）
 ```
 
-## 正式環境
+## 部署
+
+靈犀需要一個**常駐的 Node 伺服器**（WebSocket 即時連線）。GitHub Pages、Vercel 這類靜態／serverless 主機**跑不了遊戲伺服器**，只能放前端。
+
+### 做法 A：全部放 Render（最簡單）
+
+1. 到 [Render](https://render.com) → **New → Blueprint** → 選這個 repo（會讀 `render.yaml`）
+2. 部署完的網址就能直接玩，網頁與 `/ws` 在同一個服務
+
+### 做法 B：前端留在 Vercel，伺服器放 Render
+
+1. 依做法 A 把服務部署到 Render，記下網址，例如 `https://lingxi.onrender.com`
+2. Vercel 專案 → **Settings → Environment Variables** 新增
+   `VITE_WS_URL` = `wss://lingxi.onrender.com/ws`
+3. 在 Vercel **重新部署**（環境變數是建置時寫進前端的）
+
+> Render 免費方案閒置約 15 分鐘會休眠，之後第一次連線要等 30–60 秒喚醒；網頁會顯示「連不上遊戲伺服器」並自動重試。
+
+### 部署在子路徑（例如 GitHub Pages 的 `/tacitgame/`）
+
+建置時加上 `BASE_PATH=/tacitgame/`，並同樣設定 `VITE_WS_URL`。
+
+### 自己的主機
 
 ```bash
 npm run build
 PORT=8787 npm start   # 同一個 port 同時提供網頁與 /ws
 ```
-
-部署到能跑 Node 長連線的主機（Render、Railway、Fly.io、VPS）。房間狀態存在記憶體，重啟會清空。
 
 ## 結構
 

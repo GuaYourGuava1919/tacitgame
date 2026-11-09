@@ -3,6 +3,8 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // 部署在子路徑時設定，例如 GitHub Pages：BASE_PATH=/tacitgame/ npm run build
+  base: process.env.BASE_PATH || '/',
   plugins: [vue()],
   server: {
     host: true,

@@ -1,4 +1,5 @@
 // 把整局的默契網畫成一張 PNG，方便分享到社群
+import { asset } from './asset'
 export interface ExportInput {
   title: string
   subtitle: string
@@ -41,7 +42,7 @@ export async function exportWebImage(input: ExportInput) {
 
   try {
     const logo = new Image()
-    logo.src = '/brand/lingxi-logo.webp'
+    logo.src = asset('brand/lingxi-logo.webp')
     await logo.decode()
     const lh = 70
     const lw = (logo.width / logo.height) * lh
@@ -110,7 +111,7 @@ export async function exportWebImage(input: ExportInput) {
   let seal: HTMLImageElement | null = null
   try {
     seal = new Image()
-    seal.src = '/brand/seal.webp'
+    seal.src = asset('brand/seal.webp')
     await seal.decode()
   } catch {
     seal = null

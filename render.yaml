@@ -1,0 +1,13 @@
+# Render 一鍵部署：前端與遊戲伺服器放在同一個服務（支援 WebSocket）
+# 到 https://render.com → New → Blueprint → 選這個 repo
+services:
+  - type: web
+    name: lingxi
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"

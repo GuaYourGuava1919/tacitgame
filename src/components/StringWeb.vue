@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { asset } from '../asset'
 
 export interface WebNode {
   id: string
@@ -185,7 +186,7 @@ function strokeWidth(e: WebEdge) {
         <circle v-if="p.node.clickable" r="37" class="halo" />
         <g :transform="`rotate(${tilt(p.node.id)}) scale(${p.center ? 1.25 : 1})`">
           <!-- 水彩爪印印章（public/brand/seal.webp） -->
-          <image href="/brand/seal.webp" x="-30" y="-30" width="60" height="60" class="seal-img" />
+          <image :href="asset('brand/seal.webp')" x="-30" y="-30" width="60" height="60" class="seal-img" />
         </g>
         <title>{{ p.node.name }}{{ p.node.word ? `：${p.node.word}` : '' }}</title>
       </g>
