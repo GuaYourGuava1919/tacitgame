@@ -118,6 +118,9 @@ body {
   font-weight: 400;
   font-size: 16px;
   line-height: 1.7;
+  /* 粉圓只有一個字重：全站不讓瀏覽器硬加粗，層次改用大小與顏色 */
+  font-synthesis: none;
+  letter-spacing: 0.02em;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -212,8 +215,8 @@ button {
   color: var(--ink);
   border-radius: 12px;
   padding: 11px 22px;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 400;
+  font-size: 16px;
   line-height: 1.2;
   box-shadow: 0 3px 0 var(--line-strong);
   transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), background 0.2s;
